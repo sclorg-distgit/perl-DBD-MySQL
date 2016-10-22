@@ -2,13 +2,12 @@
 
 Name:           %{?scl_prefix}perl-DBD-MySQL
 Version:        4.035
-Release:        3%{?dist}
+Release:        2%{?dist}
 Summary:        A MySQL interface for Perl
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 URL:            http://search.cpan.org/dist/DBD-mysql/
 Source0:        http://www.cpan.org/authors/id/M/MI/MICHIELB/DBD-mysql-%{version}.tar.gz
-Patch0:         DBD-mysql-4.035-Fix-nossl-option.patch
 %if 0%{?rhel} < 7
 BuildRequires:  mysql, mysql-devel
 %else
@@ -48,13 +47,17 @@ management system.
 
 %prep
 %setup -q -n DBD-mysql-%{version}
-%patch0 -p1
-
 # Correct file permissions
 find . -type f | xargs chmod -x
 
+for file in lib/DBD/mysql.pm Changes; do
+  iconv -f iso-8859-1 -t utf-8 <$file >${file}_
+  touch -r ${file}{,_}
+  mv -f ${file}{_,}
+done
+
 %build
-%{?scl:scl enable %{scl} '}perl Makefile.PL INSTALLDIRS=vendor OPTIMIZE="%{optflags}" && make %{?_smp_mflags}%{?scl:'}
+%{?scl:scl enable %{scl} '}perl Makefile.PL INSTALLDIRS=vendor OPTIMIZE="%{optflags}" --ssl && make %{?_smp_mflags}%{?scl:'}
 
 %install
 %{?scl:scl enable %{scl} '}make pure_install DESTDIR=%{buildroot}%{?scl:'}
@@ -75,10 +78,6 @@ find %{buildroot} -type f -name '*.bs' -empty -exec rm -f {} ';'
 %{_mandir}/man3/*.3*
 
 %changelog
-* Mon Aug 22 2016 Jitka Plesnikova <jplesnik@redhat.com> - 4.035-3
-- Remove using of iconv, because it is not needed (bug #1368046)
-- Fix default value for nossl option (bug #1366773)
-
 * Tue Jul 12 2016 Petr Pisar <ppisar@redhat.com> - 4.035-2
 - SCL
 
