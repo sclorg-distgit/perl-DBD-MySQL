@@ -2,13 +2,14 @@
 
 Name:           %{?scl_prefix}perl-DBD-MySQL
 Version:        4.035
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        A MySQL interface for Perl
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 URL:            http://search.cpan.org/dist/DBD-mysql/
 Source0:        http://www.cpan.org/authors/id/M/MI/MICHIELB/DBD-mysql-%{version}.tar.gz
 Patch0:         DBD-mysql-4.035-Fix-nossl-option.patch
+Patch1:         DBD-MySQL-4.037-Do-not-use-unsafe-sprintf-w-variable-length-input.patch
 %if 0%{?rhel} < 7
 BuildRequires:  mysql, mysql-devel
 %else
@@ -49,6 +50,7 @@ management system.
 %prep
 %setup -q -n DBD-mysql-%{version}
 %patch0 -p1
+%patch1 -p1
 
 # Correct file permissions
 find . -type f | xargs chmod -x
@@ -75,6 +77,10 @@ find %{buildroot} -type f -name '*.bs' -empty -exec rm -f {} ';'
 %{_mandir}/man3/*.3*
 
 %changelog
+* Fri Oct 07 2016 Jitka Plesnikova <jplesnik@redhat.com> - 4.035-4
+- Fixed buffer overflow triggered by user supplied data (CVE-2016-1246)
+- Resolves: rhbz#1368046
+
 * Mon Aug 22 2016 Jitka Plesnikova <jplesnik@redhat.com> - 4.035-3
 - Remove using of iconv, because it is not needed (bug #1368046)
 - Fix default value for nossl option (bug #1366773)
