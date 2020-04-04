@@ -2,11 +2,14 @@
 
 Name:           %{?scl_prefix}perl-DBD-MySQL
 Version:        4.050
-Release:        5%{?dist}
+Release:        6%{?dist}
 Summary:        A MySQL interface for Perl
 License:        GPL+ or Artistic
 URL:            https://metacpan.org/release/DBD-mysql
 Source0:        https://cpan.metacpan.org/authors/id/D/DV/DVEEDEN/DBD-mysql-%{version}.tar.gz
+# Remove a useless shebang, bug #1813195,
+# <https://github.com/perl5-dbi/DBD-mysql/pull/321>
+Patch0:         DBD-mysql-4.050-Remove-a-useless-shebang-from-DBD-mysql.patch
 BuildRequires:  coreutils
 BuildRequires:  findutils
 BuildRequires:  gcc
@@ -46,6 +49,7 @@ management system.
 
 %prep
 %setup -q -n DBD-mysql-%{version}
+%patch0 -p1
 
 # Correct file permissions
 find . -type f | xargs chmod -x
@@ -71,6 +75,9 @@ find %{buildroot} -type f -name '*.bs' -empty -delete
 %{_mandir}/man3/*.3*
 
 %changelog
+* Fri Mar 13 2020 Petr Pisar <ppisar@redhat.com> - 4.050-6
+- Remove a useless shebang (bug #1813195)
+
 * Thu Jan 02 2020 Jitka Plesnikova <jplesnik@redhat.com> - 4.050-5
 - SCL
 

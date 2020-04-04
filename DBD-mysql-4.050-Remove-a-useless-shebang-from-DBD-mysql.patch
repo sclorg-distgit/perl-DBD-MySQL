@@ -1,0 +1,34 @@
+From fc754728272e776b48b3a432ada9954335b783b6 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Petr=20P=C3=ADsa=C5=99?= <ppisar@redhat.com>
+Date: Fri, 13 Mar 2020 13:41:17 +0100
+Subject: [PATCH] Remove a useless shebang from DBD::mysql
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Shebang has only a meaning for an executable script. DBD::mysql Perl
+module is not an executable script that someone would run as an
+standalone program. Morover, the file would have to have set an
+executable bit. It seems the erroneous shebang was added by a mistake
+when removing an Emacs configuration line.
+
+This patch removes the shebang.
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ lib/DBD/mysql.pm | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/lib/DBD/mysql.pm b/lib/DBD/mysql.pm
+index 2277fbe..5c90f3e 100644
+--- a/lib/DBD/mysql.pm
++++ b/lib/DBD/mysql.pm
+@@ -1,5 +1,3 @@
+-#!/usr/bin/perl
+-
+ use strict;
+ use warnings;
+ require 5.008_001; # just as DBI
+-- 
+2.21.1
+
